@@ -1,0 +1,38 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Filing {
+  id           String   @id @default(cuid())
+  accessionNo  String   @unique
+  ticker       String
+  company      String
+  insiderName  String
+  insiderTitle String
+  transCode    String   // P = buy, S = sell, A = award
+  shares       Float
+  pricePerShare Float
+  totalValue   Float
+  filedAt      DateTime
+  periodOfReport DateTime
+
+  // Price impact tracking
+  price1d      Float?
+  price4d      Float?
+  price10d     Float?
+  priceFetched DateTime?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([ticker])
+  @@index([filedAt])
+  @@index([transCode])
+}
